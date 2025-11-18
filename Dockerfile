@@ -1,18 +1,13 @@
-# Image avec JDK + Maven déjà installés
-FROM maven:3.9-eclipse-temurin-25-alpine AS dev
-
-# Dossier de travail dans le conteneur
+# Build stage
+FROM maven:3.9-eclipse-temurin-25-alpine AS build
 WORKDIR /app
-
-# Copie du pom.xml en premier (pratique pour le cache Docker)
 COPY pom.xml .
-
-# Copie du code source
 COPY src ./src
+RUN mvn -B -DskipTests clean package
 
-# Port exposé par Spring Boot
+# Runtime stage
+FROM eclipse-temurin:25-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Lancement en mode dev
-# -DskipTests : on ne lance pas les tests à chaque démarrage
-CMD ["mvn", "spring-boot:run", "-DskipTests"]
+CMD ["java", "-jar", "app.jar"]
