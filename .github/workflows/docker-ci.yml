@@ -24,9 +24,9 @@ jobs:
 
       - name: Build Docker image
         env:
-          IMAGE_TAG: ${{ github.sha }} // creer un tag avec l'id du commit
+          IMAGE_TAG: ${{ github.sha }} 
         run: |
-          docker build -t spring-backend:${IMAGE_TAG} . | tee docker-build.log // Creer un log de build
+          docker build -t spring-backend:${IMAGE_TAG} . | tee docker-build.log
 
       - name: Upload Docker build log
         uses: actions/upload-artifact@v4
